@@ -6,6 +6,8 @@ import 'package:demo/constants.dart';
 import 'package:demo/widgets/food_card.dart';
 import 'package:demo/database/database.dart';
 
+import 'package:demo/controller/cart_page_controller.dart';
+
 class CartPage extends StatefulWidget {
   const CartPage({Key? key}) : super(key: key);
 
@@ -15,6 +17,7 @@ class CartPage extends StatefulWidget {
 
 class _CartPageState extends State<CartPage> {
   bool hasData = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,7 +59,7 @@ class _CartPageState extends State<CartPage> {
                           TextButton(
                             onPressed: () {
                               setState(() {
-                                DatabaseHelper.instance.clearCart();
+                                CartController.clearCart();
                               });
                               Navigator.pop(context, 'OK');
                             },
@@ -86,8 +89,7 @@ class _CartPageState extends State<CartPage> {
           if(values[index].id != '' && values[index].carted == 1) {
             hasData = true;
             return FoodCard(values[index]);
-          }
-          if(index == values.length - 1 && !hasData) {
+          } else if(index == values.length - 1 && !hasData) {
             return const Center(
               heightFactor: 25.0,
               child: Text('NO FOOD IN CART', style: noData),

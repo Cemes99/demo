@@ -31,7 +31,7 @@ class _FoodDetailsState extends State<FoodDetails> {
             image: AssetImage(widget.food.imagePath!),
             fit: BoxFit.fill,
           ),
-          space,
+          spaceV,
           Container(
             padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
             child: Column(
@@ -61,8 +61,8 @@ class _FoodDetailsState extends State<FoodDetails> {
                   ],
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 ),
-                space,
-                space,
+                spaceV,
+                spaceV,
                 Row(
                   children: [
                     const Text(
@@ -74,7 +74,7 @@ class _FoodDetailsState extends State<FoodDetails> {
                     Text(widget.food.price.toString() + " VND"),
                   ],
                 ),
-                space,
+                spaceV,
                 Row(
                   children: [
                     const Text(
@@ -89,7 +89,7 @@ class _FoodDetailsState extends State<FoodDetails> {
               ],
             ),
           ),
-          space,
+          spaceV,
           TextButton(
             onPressed: () {
               widget.food.carted = 1;

@@ -84,6 +84,9 @@ flutter:
     - assets/images/coffee2.png
     - assets/images/coffee3.png
     - assets/images/background.png
+    - assets/images/raucai1.png
+    - assets/images/raucai2.png
+    - assets/images/raucu1.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

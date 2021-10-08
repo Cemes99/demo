@@ -12,10 +12,11 @@ class DatabaseHelper {
 
   static const String tableUser = "USER";
   static const String tableFood = "FOOD";
-  static const String tableCart = "CART";
+  // static const String tableCart = "CART";
 
   static const String createTableUser = "CREATE TABLE " + tableUser
-    + "(username text, password text, name nvarchar(50), address nvarchar(150), logged int)";
+    + "(username text, password text, name nvarchar(50),"
+    + " address nvarchar(150), phoneNumber nchar(11), online int";
 
   static const String createTableFood = "CREATE TABLE " + tableFood
       + "(id text, name nvarchar(50), imagePath nchar(60), category nchar(30),"
@@ -54,7 +55,6 @@ class DatabaseHelper {
       List<User> list = user.map((e) => User.fromMap(e)).toList();
 
       for(var x in list) {
-
         if(x.username == username) return x;
       }
       return User(username: '');
@@ -64,7 +64,7 @@ class DatabaseHelper {
 
   Future<void> dropAll() async {
     Database db = await instance.database;
-    // await db.delete(tableUser);
+    await db.delete(tableUser);
     await db.delete(tableFood);
     // await db.delete(tableCart);
   }
@@ -72,6 +72,12 @@ class DatabaseHelper {
   Future<int> addUser(User user) async {
     Database db = await instance.database;
     return await db.insert(tableUser, user.toMap());
+  }
+
+  Future<int> updateUser(User user) async {
+    Database db = await instance.database;
+    return await db.update(tableUser, user.toMap(),
+        where: 'username = ?', whereArgs: [user.username]);
   }
 
   Future<int> addFoodToCart(Food food) async {
@@ -144,6 +150,40 @@ class DatabaseHelper {
     }
 
     return Food(id: '');
+  }
+
+  Future<List<Food>> getFoodByCategory(String category) async {
+    Database db = await instance.database;
+    var foods = await db.query(tableFood);
+
+    if(foods.isNotEmpty) {
+      List<Food> list = foods.map((e) => Food.fromMap(e)).toList();
+      List<Food> ans = [];
+      for(Food x in list) {
+        if(x.category == category) ans.add(x);
+      }
+
+      return ans;
+    }
+
+    return [];
+  }
+
+  Future<List<Food>> getFoodByName(String name) async {
+    Database db = await instance.database;
+    var foods = await db.query(tableFood);
+
+    if(foods.isNotEmpty) {
+      List<Food> list = foods.map((e) => Food.fromMap(e)).toList();
+      List<Food> ans = [];
+      for(Food x in list) {
+        if(x.name!.contains(name)) ans.add(x);
+      }
+
+      return ans;
+    }
+
+    return [];
   }
 
   Future<Food> getFoodFromCart() async {

@@ -1,4 +1,3 @@
-import 'package:demo/main.dart';
 import 'package:flutter/material.dart';
 import 'package:demo/constants.dart';
 
@@ -8,7 +7,6 @@ class HomeTopWidget extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       margin: const EdgeInsets.only(bottom: 20.0),
       child: Column(

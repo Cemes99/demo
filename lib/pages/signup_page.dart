@@ -1,9 +1,8 @@
-import 'package:demo/database/database.dart';
-import 'package:demo/pages/login_page.dart';
 import 'package:flutter/material.dart';
 
+import 'package:demo/controller/signup_page_controller.dart';
+
 import 'package:demo/constants.dart';
-import 'package:demo/models/user_model.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -13,7 +12,6 @@ class SignUpPage extends StatefulWidget {
 
 }
 
-
 class _SignUpState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
 
@@ -21,37 +19,12 @@ class _SignUpState extends State<SignUpPage> {
   String _password = '';
   String _rePassword = '';
 
-  final List<String?> errors = [];
-
-  void addError({String? error}) {
-    if (!errors.contains(error)) {
-      setState(() {
-        errors.add(error);
-      });
-    }
-  }
-
-  void removeError({String? error}) {
-    if (errors.contains(error)) {
-      setState(() {
-        errors.remove(error);
-      });
-    }
-  }
+  SignUpController controller = SignUpController();
 
   Widget _usernameField() {
     return TextFormField(
       onChanged: (value) {
-        if (value.isNotEmpty) {
-          removeError(error: userNullError);
-          _username = value;
-        }
-      },
-      validator: (value) {
-        if (value!.isEmpty) {
-          addError(error: userNullError);
-          _username = value;
-        }
+        if (value.isNotEmpty) _username = value;
       },
       decoration: const InputDecoration(
         contentPadding: EdgeInsets.only(left: 20, right: 20),
@@ -76,14 +49,7 @@ class _SignUpState extends State<SignUpPage> {
     return TextFormField(
       obscureText: true,
       onChanged: (value) {
-        if (value.isNotEmpty) {
-          removeError(error: passNullError);
-          _password = value;
-        }
-      },
-      validator: (value) {
-        if (value!.isEmpty) addError(error: passNullError);
-        _password = value;
+        if (value.isNotEmpty) _password = value;
       },
       decoration: const InputDecoration(
           contentPadding: EdgeInsets.only(left: 20, right: 20),
@@ -108,14 +74,7 @@ class _SignUpState extends State<SignUpPage> {
     return TextFormField(
       obscureText: true,
       onChanged: (value) {
-        if (value.isNotEmpty) {
-          removeError(error: passNullError);
-          _rePassword = value;
-        }
-      },
-      validator: (value) {
-        if (value!.isEmpty) addError(error: rePassNullError);
-        _rePassword = value;
+        if (value.isNotEmpty) _rePassword = value;
       },
       decoration: const InputDecoration(
           contentPadding: EdgeInsets.only(left: 20, right: 20),
@@ -143,8 +102,7 @@ class _SignUpState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
-    // DatabaseReference database = FirebaseDatabase.instance.reference();
-    
+    List<String?> errors = controller.errors;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -161,15 +119,15 @@ class _SignUpState extends State<SignUpPage> {
           child: Column(
             children: [
               _usernameField(),
-              space,
+              spaceV,
               _passwordField(),
-              space,
+              spaceV,
               _rePasswordField(),
-              space,
+              spaceV,
               Column(
                 children: errors.map(errorsText).toList(),
               ),
-              space,
+              spaceV,
               TextButton(
                 style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(mainColor),
@@ -182,14 +140,8 @@ class _SignUpState extends State<SignUpPage> {
                 ),
                 onPressed: () async {
                   if(_formKey.currentState!.validate()) _formKey.currentState!.save();
-                  if(_rePassword == _password) {
-                    await DatabaseHelper.instance.addUser(User(username: _username, password: _password));
-
-                    Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => const LoginPage())
-                    );
-                  } else {
-                    addError(error: rePassDiff);
+                  if(await controller.isValid(_username, _password, _rePassword)) {
+                    controller.callLogin(context);
                   }
                 },
                 child: const Text(

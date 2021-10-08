@@ -93,11 +93,41 @@ final foods = [
   ),
   Food(
       id:"10",
-      name: "Cà phê",
+      name: "Capuchino",
       imagePath: "assets/images/coffee2.png",
-      category: "Cà phê",
+      category: "Coffee",
       price: 16000,
       shop: "Co Coffee",
+      carted: 0,
+      loved: 0
+  ),
+  Food(
+    id: '11',
+    name: 'Rau cải 1',
+    imagePath: 'assets/images/raucai1.png',
+    category: 'Vegetable',
+    price: 10000,
+    shop: "Veg Shop",
+    carted: 0,
+    loved: 0
+  ),
+  Food(
+      id: '12',
+      name: 'Rau cải 2',
+      imagePath: 'assets/images/raucai2.png',
+      category: 'Vegetable',
+      price: 10000,
+      shop: "Veg Shop",
+      carted: 0,
+      loved: 0
+  ),
+  Food(
+      id: '13',
+      name: 'Rau củ 5',
+      imagePath: 'assets/images/raucu1.png',
+      category: 'Vegetable',
+      price: 10000,
+      shop: "Veg Shop",
       carted: 0,
       loved: 0
   ),
