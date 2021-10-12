@@ -43,9 +43,5 @@ class Food {
       await DatabaseHelper.instance.addFoodToFood(x);
     }
   }
-
-  void setCarted() {
-    carted = 1;
-  }
 }
 

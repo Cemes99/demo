@@ -1,12 +1,8 @@
-import 'package:demo/models/food_model.dart';
+import 'package:demo/database/database.dart';
 import 'package:flutter/material.dart';
 import 'package:demo/constants.dart';
 
-import 'package:demo/screen/main_screen.dart';
-import './signup_page.dart';
-
-import 'package:demo/database/database.dart';
-import 'package:demo/models/user_model.dart';
+import 'package:demo/controller/login_page_controller.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -17,61 +13,15 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage>{
   final _formKey = GlobalKey<FormState>();
+  final controller = LoginController();
 
   String _username = '';
   String _password = '';
-  final List<String?> errors = [];
-
-  void addError({String? error}) {
-    if (!errors.contains(error)) {
-      setState(() {
-        errors.add(error);
-      });
-    }
-  }
-
-  void removeError({String? error}) {
-    if (errors.contains(error)) {
-      setState(() {
-        errors.remove(error);
-      });
-    }
-  }
 
   Widget _usernameField() {
     return TextFormField(
       onChanged: (value) {
-        if (value.isNotEmpty) {
-          removeError(error: userNullError);
-          if(value.length >= 6 && value.length <= 15) {
-            bool done = true;
-            for(String x in inValidChar) {
-              if(value.contains(x)) {
-                done = false;
-                break;
-              }
-            }
-
-            if(done) removeError(error: userInvalid);
-          }
-          _username = value;
-        }
-      },
-      validator: (value) {
-        if (value!.isEmpty) {
-          addError(error: userNullError);
-        } else {
-          if(value.length < 6 || value.length > 15) {
-            addError(error: userInvalid);
-          } else {
-            for(String x in inValidChar) {
-              if(value.contains(x)) {
-                addError(error: userInvalid);
-                break;
-              }
-            }
-          }
-        }
+        if (value.isNotEmpty) _username = value;
       },
       decoration: const InputDecoration(
         contentPadding: EdgeInsets.only(left: 20, right: 20),
@@ -96,20 +46,7 @@ class _LoginPageState extends State<LoginPage>{
     return TextFormField(
       obscureText: true,
       onChanged: (value) {
-        if (value.isNotEmpty) {
-          removeError(error: passNullError);
-          if(value.length >= 6 && value.length <= 15) {
-            removeError(error: passInvalid);
-          }
-          _password = value;
-        }
-      },
-      validator: (value) {
-        if (value!.isEmpty) {
-          addError(error: passNullError);
-        } else if (value.length < 6 || value.length > 15) {
-          addError(error: passInvalid);
-        }
+        if (value.isNotEmpty) _password = value;
       },
       decoration: const InputDecoration(
         contentPadding: EdgeInsets.only(left: 20, right: 20),
@@ -130,19 +67,6 @@ class _LoginPageState extends State<LoginPage>{
     );
   }
 
-  Future<bool> isValid() async {
-    User user = await DatabaseHelper.instance.getUser(_username);
-    if(_username == user.username && _password == user.password) return true;
-
-    if(errors.isEmpty) {
-      addError(error: wrongUserOrPass);
-    } else if(errors.contains(wrongUserOrPass)) {
-      removeError(error: wrongUserOrPass);
-    }
-
-    return false;
-  }
-
   Widget errorsText(String? s) {
     if(s != null) return Text(s);
     return const Text('');
@@ -150,6 +74,7 @@ class _LoginPageState extends State<LoginPage>{
 
   @override
   Widget build(BuildContext context) {
+    List<String?> errors = controller.errors;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -167,13 +92,13 @@ class _LoginPageState extends State<LoginPage>{
           child: Column(
             children: [
               _usernameField(),
-              space,
+              spaceV,
               _passwordField(),
-              space,
+              spaceV,
               Column(
                 children: errors.map(errorsText).toList(),
               ),
-              space,
+              spaceV,
               TextButton(
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(mainColor),
@@ -185,15 +110,17 @@ class _LoginPageState extends State<LoginPage>{
                   )
                 ),
                 onPressed: () async {
-                  if(_formKey.currentState!.validate()) _formKey.currentState!.save();
+                  setState(() {
+                    errors = controller.errors;
+                  });
 
-                  if(await isValid()) {
-                    Food.initFood();
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const MainScreen())
-                    );
-                  }
                   DatabaseHelper.instance.dropAll();
+                  controller.init();
+                  if(await controller.isValid(_username, _password)) {
+                    controller.callMainScreen(context);
+                  }
+
+
                   // DatabaseHelper.instance.delete();
 
                 },
@@ -202,15 +129,13 @@ class _LoginPageState extends State<LoginPage>{
                   style: TextStyle(color: mainTextColor),
                 ),
               ),
-              space,
+              spaceV,
               Row(
                 children: [
                   const Text(' Don\'t have account? '),
                   TextButton(
                     onPressed: () {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => const SignUpPage())
-                      );
+                      controller.callRegister(context);
                     },
                     child: const Text('Sign up'),
                   )
@@ -222,5 +147,4 @@ class _LoginPageState extends State<LoginPage>{
       ),
     );
   }
-
 }

@@ -1,12 +1,9 @@
+import 'package:demo/widgets/list_food.dart';
 import 'package:flutter/material.dart';
 import 'package:demo/constants.dart';
 
 import 'package:demo/widgets/top_home_page.dart';
 import 'package:demo/widgets/search_bar.dart';
-import 'package:demo/widgets/food_card.dart';
-
-import 'package:demo/models/food_model.dart';
-import 'package:demo/data/food_data.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -16,31 +13,107 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<Food> _list = foods;
+  String? key = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         decoration: background,
-        child: ListView(
-          padding: appMargin,
+        padding: appMargin,
+        child: Column(
           children: <Widget>[
             const HomeTopWidget(),
-            space,
-            SearchBar(),
-            space,
-            Column(
-              children: _list.map(buildFoodCard).toList(),
-              mainAxisSize: MainAxisSize.min,
-            )
+            spaceV,
+            const SearchBar(),
+            spaceV,
+            Flexible(
+              child: ListView(
+                children: [
+                  TextButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(mainTextColor),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                                side: const BorderSide(color: mainTextColor, width: 2)
+                            )
+                        )
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        key = '';
+                      });
+                    },
+                    child: const Text('Tất cả', style: TextStyle(color: Colors.black),),
+                  ),
+                  spaceH,
+                  TextButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(mainTextColor),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                                side: const BorderSide(color: mainTextColor, width: 2)
+                            )
+                        )
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        key = 'Vegetable';
+                      });
+                    },
+                    child: const Text('Rau củ', style: TextStyle(color: Colors.black),),
+                  ),
+                  spaceH,
+                  TextButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(mainTextColor),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                                side: const BorderSide(color: mainTextColor, width: 2)
+                            )
+                        )
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        key = 'Coffee';
+                      });
+                    },
+                    child: const Text('Cà phê', style: TextStyle(color: Colors.black),),
+                  ),
+                  spaceH,
+                  TextButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(mainTextColor),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                                side: const BorderSide(color: mainTextColor, width: 2)
+                            )
+                        )
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        key = 'Pizza';
+                      });
+                    },
+                    child: const Text('Pizza', style: TextStyle(color: Colors.black),),
+                  ),
+                ],
+                scrollDirection: Axis.horizontal,
+              ),
+              flex: 1,
+            ),
+            spaceV,
+            Flexible(
+              child: ListFoodWidget(key!),
+              flex: 6,
+            ),
           ],
         ),
       )
     );
-  }
-
-  Widget buildFoodCard(Food food) {
-    return FoodCard(food);
   }
 }
